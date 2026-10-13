@@ -16,3 +16,6 @@ SIP-KUNCI adalah platform digital manajemen peminjaman kunci ruang kelas, labora
 2. **Pembatasan Durasi:** Mahasiswa dibatasi durasi peminjaman maksimal 4 jam per reservasi guna mencegah monopoli fasilitas lab.
 3. **Penerbitan Tiket Token:** Sistem menghasilkan token alfanumerik unik (misal ) sebagai tanda bukti verifikasi fisik di meja Front Office.
 4. **Kalkulator Overdue:** Keterlambatan pengembalian melebihi toleransi 15 menit otomatis memicu denda Rp5.000 / 30 menit.
+
+## Kebijakan Sanksi Overdue (Branch Feature)
+- Tarif denda diatur flat Rp 10.000 per jam keterlambatan.
