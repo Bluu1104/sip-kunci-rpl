@@ -16,9 +16,9 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 2. Tabel Ruangan & Laboratorium
+-- 2. Tabel Ruang Kelas (Ruang 1 - Ruang 13)
 CREATE TABLE IF NOT EXISTS ruangan (
-    id VARCHAR(20) PRIMARY KEY, -- R-LAB-01, dst
+    id VARCHAR(20) PRIMARY KEY, -- R-01 s.d. R-13
     nama_ruangan VARCHAR(100) NOT NULL,
     gedung VARCHAR(50) NOT NULL,
     lantai INT NOT NULL,

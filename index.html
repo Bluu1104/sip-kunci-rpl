@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIP-KUNCI | Sistem Informasi Peminjaman Kunci Kampus UDB</title>
+    <title>SIP-KUNCI | Sistem Peminjaman Kunci Ruang Kelas Kampus UDB</title>
     <style>
         :root {
             --bg-base: #090d16;
@@ -20,7 +20,7 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background: var(--bg-base); color: var(--text-main); line-height: 1.5; padding: 24px 20px; }
-        .container { max-width: 1100px; margin: 0 auto; }
+        .container { max-width: 1160px; margin: 0 auto; }
 
         /* Top Header & Breadcrumbs */
         .topbar {
@@ -86,8 +86,9 @@
             grid-template-columns: 360px 1fr;
             gap: 24px;
             margin-bottom: 24px;
+            align-items: start;
         }
-        @media (max-width: 880px) {
+        @media (max-width: 900px) {
             .main-grid { grid-template-columns: 1fr; }
         }
 
@@ -97,6 +98,8 @@
             border: 1px solid var(--border-dim);
             border-radius: 16px;
             padding: 22px;
+            position: sticky;
+            top: 20px;
         }
         .form-card h2 { font-size: 16px; font-weight: 700; margin-bottom: 16px; border-bottom: 1px solid var(--border-dim); padding-bottom: 10px; }
         .form-group { margin-bottom: 14px; }
@@ -160,6 +163,7 @@
             font-size: 11px;
             font-weight: 600;
             cursor: pointer;
+            white-space: nowrap;
         }
         .btn-return:hover { background: var(--accent-rose); color: #fff; }
 
@@ -184,8 +188,8 @@
     <!-- Header Institusi & Author -->
     <header class="topbar">
         <div class="brand-title">
-            <h1>🔑 SIP-KUNCI &bull; Console Sistem Kampus</h1>
-            <p>Sistem Informasi Manajemen Peminjaman Kunci Fisik Ruang Kelas &amp; Laboratorium Komputer</p>
+            <h1>🔑 SIP-KUNCI &bull; Console Sistem Kampus UDB</h1>
+            <p>Sistem Informasi Manajemen Peminjaman Kunci Fisik Ruang Kelas Teori (Ruang 1 &ndash; Ruang 13)</p>
         </div>
         <div class="author-badge">
             Mahasiswa / Praktikan:
@@ -197,16 +201,16 @@
     <!-- Stat Counter -->
     <section class="stat-grid">
         <div class="stat-card blue">
-            <div class="label">Total Ruangan Terdata</div>
-            <div class="value" id="statTotal">5 Unit</div>
+            <div class="label">Total Ruang Kelas Terdata</div>
+            <div class="value" id="statTotal">13 Unit</div>
         </div>
         <div class="stat-card green">
             <div class="label">Kunci Tersedia di Front Office</div>
-            <div class="value" id="statAvailable">4 Kunci</div>
+            <div class="value" id="statAvailable">11 Kunci</div>
         </div>
         <div class="stat-card rose">
             <div class="label">Kunci Sedang Dipinjam</div>
-            <div class="value" id="statBorrowed">1 Kunci</div>
+            <div class="value" id="statBorrowed">2 Kunci</div>
         </div>
     </section>
 
@@ -233,9 +237,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Pilih Ruangan / Laboratorium</label>
+                    <label>Pilih Ruang Kelas (Ruang 1 &ndash; 13)</label>
                     <select id="selRuangan" required>
-                        <option value="">-- Pilih Ruangan --</option>
+                        <option value="">-- Pilih Ruang Kelas --</option>
                     </select>
                 </div>
 
@@ -252,7 +256,7 @@
 
                 <div class="form-group">
                     <label>Keperluan Pemakaian Ruangan</label>
-                    <textarea id="inKeperluan" rows="2" placeholder="Contoh: Rapat Kerja Pengurus HMPTK" required>Rapat Kerja Koordinasi Pengurus HMPTK</textarea>
+                    <textarea id="inKeperluan" rows="2" placeholder="Contoh: Rapat Koordinasi Pengurus HMPTK" required>Perkuliahan Tambahan &amp; Rapat HMPTK</textarea>
                 </div>
 
                 <button type="submit" class="btn-submit">🚀 Ajukan Peminjaman Kunci</button>
@@ -261,14 +265,14 @@
             <div class="ticket-box" id="ticketBox">
                 <div style="font-size: 11px; text-transform: uppercase; color: #a7f3d0; font-weight: 700;">Tiket Serah Terima Front Office</div>
                 <div class="ticket-code" id="ticketCode">TKT-XXXXXX</div>
-                <div style="font-size: 12px; margin-top: 4px;" id="ticketRoom">Lab Jaringan &amp; RouterOS</div>
+                <div style="font-size: 12px; margin-top: 4px;" id="ticketRoom">Ruang 1</div>
                 <div style="font-size: 11px; color: #94a3b8;" id="ticketDuration">09:00 - 11:30 WIB</div>
             </div>
         </section>
 
         <!-- Panel Tabel Monitoring Kunci -->
         <section class="table-card">
-            <h2>📊 Monitoring Status Kunci &amp; Front Office Handover</h2>
+            <h2>📊 Monitoring Status Kunci Ruangan (Ruang 1 &ndash; 13)</h2>
             <table>
                 <thead>
                     <tr>
@@ -293,74 +297,38 @@
 </div>
 
 <script>
-    // Initial Master Data
-    const initialRooms = {
-        'R-LAB-01': {
-            id: 'R-LAB-01',
-            nama: 'Lab Jaringan & RouterOS',
-            gedung: 'Gedung B - Lantai 2',
-            kapasitas: '32 PC & Rack Server',
-            status: 'TERSEDIA',
-            peminjam: null,
-            jam_pinjam: null,
-            jam_kembali: null,
-            keperluan: null,
-            token: null
-        },
-        'R-LAB-02': {
-            id: 'R-LAB-02',
-            nama: 'Lab Hardware & Perakitan PC',
-            gedung: 'Gedung B - Lantai 2',
-            kapasitas: '25 Meja Workshop',
-            status: 'DIPINJAM',
-            peminjam: 'Doni Kurniawan (240104015)',
-            jam_pinjam: '08:00',
-            jam_kembali: '10:00',
-            keperluan: 'Praktikum Troubleshooting PSU',
-            token: 'TKT-82914'
-        },
-        'R-LAB-03': {
-            id: 'R-LAB-03',
-            nama: 'Lab IoT & Embedded System',
-            gedung: 'Gedung B - Lantai 3',
-            kapasitas: '30 Workbench ESP32',
-            status: 'TERSEDIA',
-            peminjam: null,
-            jam_pinjam: null,
-            jam_kembali: null,
-            keperluan: null,
-            token: null
-        },
-        'R-KLS-301': {
-            id: 'R-KLS-301',
-            nama: 'Ruang Teori 301',
-            gedung: 'Gedung A - Lantai 3',
-            kapasitas: '45 Kursi & Proyektor',
-            status: 'TERSEDIA',
-            peminjam: null,
-            jam_pinjam: null,
-            jam_kembali: null,
-            keperluan: null,
-            token: null
-        },
-        'R-ORG-101': {
-            id: 'R-ORG-101',
-            nama: 'Ruang Sekretariat HMPTK',
-            gedung: 'Gedung C - Lantai 1',
-            kapasitas: 'Ruang Rapat Ormawa',
-            status: 'TERSEDIA',
-            peminjam: null,
-            jam_pinjam: null,
-            jam_kembali: null,
-            keperluan: null,
-            token: null
-        }
+    // Master Data Resmi: Ruang 1 sampai Ruang 13 Kampus UDB
+    const defaultRooms = {
+        'R-01': { id: 'R-01', nama: 'Ruang 1', gedung: 'Gedung Utama - Lantai 1', kapasitas: '40 Kursi &bull; AC &bull; LCD Proyektor', status: 'TERSEDIA', peminjam: null, jam_pinjam: null, jam_kembali: null, keperluan: null, token: null },
+        'R-02': { id: 'R-02', nama: 'Ruang 2', gedung: 'Gedung Utama - Lantai 1', kapasitas: '40 Kursi &bull; AC &bull; LCD Proyektor', status: 'DIPINJAM', peminjam: 'Doni Kurniawan (240104015)', jam_pinjam: '08:00', jam_kembali: '10:00', keperluan: 'Kuliah Pengganti Matematika Diskrit', token: 'TKT-82914' },
+        'R-03': { id: 'R-03', nama: 'Ruang 3', gedung: 'Gedung Utama - Lantai 1', kapasitas: '45 Kursi &bull; AC &bull; LCD Proyektor', status: 'TERSEDIA', peminjam: null, jam_pinjam: null, jam_kembali: null, keperluan: null, token: null },
+        'R-04': { id: 'R-04', nama: 'Ruang 4', gedung: 'Gedung Utama - Lantai 1', kapasitas: '45 Kursi &bull; AC &bull; LCD Proyektor', status: 'TERSEDIA', peminjam: null, jam_pinjam: null, jam_kembali: null, keperluan: null, token: null },
+        'R-05': { id: 'R-05', nama: 'Ruang 5', gedung: 'Gedung Utama - Lantai 2', kapasitas: '40 Kursi &bull; AC &bull; LCD Proyektor', status: 'TERSEDIA', peminjam: null, jam_pinjam: null, jam_kembali: null, keperluan: null, token: null },
+        'R-06': { id: 'R-06', nama: 'Ruang 6', gedung: 'Gedung Utama - Lantai 2', kapasitas: '40 Kursi &bull; AC &bull; LCD Proyektor', status: 'TERSEDIA', peminjam: null, jam_pinjam: null, jam_kembali: null, keperluan: null, token: null },
+        'R-07': { id: 'R-07', nama: 'Ruang 7', gedung: 'Gedung Utama - Lantai 2', kapasitas: '40 Kursi &bull; AC &bull; LCD Proyektor', status: 'DIPINJAM', peminjam: 'Rian Hidayat (240104022)', jam_pinjam: '09:30', jam_kembali: '12:00', keperluan: 'Diskusi Kelompok Pemrograman Jaringan', token: 'TKT-91044' },
+        'R-08': { id: 'R-08', nama: 'Ruang 8', gedung: 'Gedung Utama - Lantai 2', kapasitas: '50 Kursi &bull; AC &bull; LCD Proyektor', status: 'TERSEDIA', peminjam: null, jam_pinjam: null, jam_kembali: null, keperluan: null, token: null },
+        'R-09': { id: 'R-09', nama: 'Ruang 9', gedung: 'Gedung Utama - Lantai 3', kapasitas: '40 Kursi &bull; AC &bull; LCD Proyektor', status: 'TERSEDIA', peminjam: null, jam_pinjam: null, jam_kembali: null, keperluan: null, token: null },
+        'R-10': { id: 'R-10', nama: 'Ruang 10', gedung: 'Gedung Utama - Lantai 3', kapasitas: '40 Kursi &bull; AC &bull; LCD Proyektor', status: 'TERSEDIA', peminjam: null, jam_pinjam: null, jam_kembali: null, keperluan: null, token: null },
+        'R-11': { id: 'R-11', nama: 'Ruang 11', gedung: 'Gedung Utama - Lantai 3', kapasitas: '45 Kursi &bull; AC &bull; LCD Proyektor', status: 'TERSEDIA', peminjam: null, jam_pinjam: null, jam_kembali: null, keperluan: null, token: null },
+        'R-12': { id: 'R-12', nama: 'Ruang 12', gedung: 'Gedung Utama - Lantai 3', kapasitas: '45 Kursi &bull; AC &bull; LCD Proyektor', status: 'TERSEDIA', peminjam: null, jam_pinjam: null, jam_kembali: null, keperluan: null, token: null },
+        'R-13': { id: 'R-13', nama: 'Ruang 13', gedung: 'Gedung Utama - Lantai 3', kapasitas: '50 Kursi &bull; AC &bull; LCD Proyektor', status: 'TERSEDIA', peminjam: null, jam_pinjam: null, jam_kembali: null, keperluan: null, token: null }
     };
 
-    let rooms = JSON.parse(localStorage.getItem('sip_kunci_rooms')) || initialRooms;
+    // Reset storage to force master 1-13 update
+    let rooms = defaultRooms;
+    try {
+        const saved = JSON.parse(localStorage.getItem('sip_kunci_rooms_v2'));
+        if (saved && Object.keys(saved).length === 13) {
+            rooms = saved;
+        } else {
+            localStorage.setItem('sip_kunci_rooms_v2', JSON.stringify(rooms));
+        }
+    } catch(e) {
+        rooms = defaultRooms;
+    }
 
     function saveState() {
-        localStorage.setItem('sip_kunci_rooms', JSON.stringify(rooms));
+        localStorage.setItem('sip_kunci_rooms_v2', JSON.stringify(rooms));
     }
 
     function showAlert(msg, type = 'success') {
@@ -379,7 +347,7 @@
         const select = document.getElementById('selRuangan');
         const tbody = document.getElementById('tableBody');
 
-        select.innerHTML = '<option value="">-- Pilih Ruangan --</option>';
+        select.innerHTML = '<option value="">-- Pilih Ruang Kelas --</option>';
         tbody.innerHTML = '';
 
         Object.values(rooms).forEach(r => {
@@ -442,7 +410,7 @@
 
         const room = rooms[ruangan_id];
         if (!room) {
-            showAlert('Ruangan tidak valid atau tidak terdaftar.', 'error');
+            showAlert('Ruang kelas tidak valid atau tidak terdaftar.', 'error');
             return;
         }
 
@@ -478,7 +446,7 @@
 
         // Show Active Ticket
         document.getElementById('ticketCode').textContent = token;
-        document.getElementById('ticketRoom').textContent = room.nama;
+        document.getElementById('ticketRoom').textContent = room.nama + ' (' + room.id + ')';
         document.getElementById('ticketDuration').textContent = `${jam_pinjam} - ${jam_kembali} WIB`;
         document.getElementById('ticketBox').style.display = 'block';
 

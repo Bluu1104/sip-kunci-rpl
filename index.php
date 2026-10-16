@@ -1,7 +1,7 @@
 <?php
 /**
  * ============================================================================
- * SIP-KUNCI: Sistem Informasi Peminjaman Kunci Ruangan & Lab Kampus
+ * SIP-KUNCI: Sistem Informasi Peminjaman Kunci Ruangan Kampus UDB
  * Studi Kasus Rekayasa Perangkat Lunak (RPL) - D3 Teknik Komputer UDB
  * Pengembang : Muhammad Rasya Robi Ahnaf Sandjoyo (NIM: 240104008)
  * ============================================================================
@@ -9,69 +9,22 @@
 
 session_start();
 
-// Inisialisasi Data Master Ruangan & Kunci (State Sesi)
-if (!isset($_SESSION['rooms'])) {
+// Inisialisasi Data Master Ruang Kelas 1 - 13 Kampus UDB (State Sesi)
+if (!isset($_SESSION['rooms']) || count($_SESSION['rooms']) !== 13) {
     $_SESSION['rooms'] = [
-        'R-LAB-01' => [
-            'id' => 'R-LAB-01',
-            'nama' => 'Lab Jaringan & RouterOS',
-            'gedung' => 'Gedung B - Lantai 2',
-            'kapasitas' => '32 PC & Rack Server',
-            'status' => 'TERSEDIA',
-            'peminjam' => null,
-            'jam_pinjam' => null,
-            'jam_kembali' => null,
-            'keperluan' => null,
-            'token' => null
-        ],
-        'R-LAB-02' => [
-            'id' => 'R-LAB-02',
-            'nama' => 'Lab Hardware & Perakitan PC',
-            'gedung' => 'Gedung B - Lantai 2',
-            'kapasitas' => '25 Meja Workshop',
-            'status' => 'DIPINJAM',
-            'peminjam' => 'Doni Kurniawan (240104015)',
-            'jam_pinjam' => '08:00',
-            'jam_kembali' => '10:00',
-            'keperluan' => 'Praktikum Troubleshooting PSU',
-            'token' => 'TKT-82914'
-        ],
-        'R-LAB-03' => [
-            'id' => 'R-LAB-03',
-            'nama' => 'Lab IoT & Embedded System',
-            'gedung' => 'Gedung B - Lantai 3',
-            'kapasitas' => '30 Workbench ESP32',
-            'status' => 'TERSEDIA',
-            'peminjam' => null,
-            'jam_pinjam' => null,
-            'jam_kembali' => null,
-            'keperluan' => null,
-            'token' => null
-        ],
-        'R-KLS-301' => [
-            'id' => 'R-KLS-301',
-            'nama' => 'Ruang Teori 301',
-            'gedung' => 'Gedung A - Lantai 3',
-            'kapasitas' => '45 Kursi & Proyektor',
-            'status' => 'TERSEDIA',
-            'peminjam' => null,
-            'jam_pinjam' => null,
-            'jam_kembali' => null,
-            'keperluan' => null,
-            'token' => null
-        ],
-        'R-ORG-101' => [
-            'id' => 'R-ORG-101',
-            'nama' => 'Ruang Sekretariat HMPTK',
-            'gedung' => 'Gedung C - Lantai 1',
-            'kapasitas' => 'Ruang Rapat Ormawa',
-            'status' => 'TERSEDIA',
-            'peminjam' => null,
-            'jam_pinjam' => null,
-            'jam_kembali' => null,
-            'keperluan' => null,
-            'token' => null
-        ],
+        'R-01' => ['id' => 'R-01', 'nama' => 'Ruang 1', 'gedung' => 'Gedung Utama - Lantai 1', 'kapasitas' => '40 Kursi &bull; AC &bull; LCD Proyektor', 'status' => 'TERSEDIA', 'peminjam' => null, 'jam_pinjam' => null, 'jam_kembali' => null, 'keperluan' => null, 'token' => null],
+        'R-02' => ['id' => 'R-02', 'nama' => 'Ruang 2', 'gedung' => 'Gedung Utama - Lantai 1', 'kapasitas' => '40 Kursi &bull; AC &bull; LCD Proyektor', 'status' => 'DIPINJAM', 'peminjam' => 'Doni Kurniawan (240104015)', 'jam_pinjam' => '08:00', 'jam_kembali' => '10:00', 'keperluan' => 'Kuliah Pengganti Matematika Diskrit', 'token' => 'TKT-82914'],
+        'R-03' => ['id' => 'R-03', 'nama' => 'Ruang 3', 'gedung' => 'Gedung Utama - Lantai 1', 'kapasitas' => '45 Kursi &bull; AC &bull; LCD Proyektor', 'status' => 'TERSEDIA', 'peminjam' => null, 'jam_pinjam' => null, 'jam_kembali' => null, 'keperluan' => null, 'token' => null],
+        'R-04' => ['id' => 'R-04', 'nama' => 'Ruang 4', 'gedung' => 'Gedung Utama - Lantai 1', 'kapasitas' => '45 Kursi &bull; AC &bull; LCD Proyektor', 'status' => 'TERSEDIA', 'peminjam' => null, 'jam_pinjam' => null, 'jam_kembali' => null, 'keperluan' => null, 'token' => null],
+        'R-05' => ['id' => 'R-05', 'nama' => 'Ruang 5', 'gedung' => 'Gedung Utama - Lantai 2', 'kapasitas' => '40 Kursi &bull; AC &bull; LCD Proyektor', 'status' => 'TERSEDIA', 'peminjam' => null, 'jam_pinjam' => null, 'jam_kembali' => null, 'keperluan' => null, 'token' => null],
+        'R-06' => ['id' => 'R-06', 'nama' => 'Ruang 6', 'gedung' => 'Gedung Utama - Lantai 2', 'kapasitas' => '40 Kursi &bull; AC &bull; LCD Proyektor', 'status' => 'TERSEDIA', 'peminjam' => null, 'jam_pinjam' => null, 'jam_kembali' => null, 'keperluan' => null, 'token' => null],
+        'R-07' => ['id' => 'R-07', 'nama' => 'Ruang 7', 'gedung' => 'Gedung Utama - Lantai 2', 'kapasitas' => '40 Kursi &bull; AC &bull; LCD Proyektor', 'status' => 'DIPINJAM', 'peminjam' => 'Rian Hidayat (240104022)', 'jam_pinjam' => '09:30', 'jam_kembali' => '12:00', 'keperluan' => 'Diskusi Kelompok Pemrograman Jaringan', 'token' => 'TKT-91044'],
+        'R-08' => ['id' => 'R-08', 'nama' => 'Ruang 8', 'gedung' => 'Gedung Utama - Lantai 2', 'kapasitas' => '50 Kursi &bull; AC &bull; LCD Proyektor', 'status' => 'TERSEDIA', 'peminjam' => null, 'jam_pinjam' => null, 'jam_kembali' => null, 'keperluan' => null, 'token' => null],
+        'R-09' => ['id' => 'R-09', 'nama' => 'Ruang 9', 'gedung' => 'Gedung Utama - Lantai 3', 'kapasitas' => '40 Kursi &bull; AC &bull; LCD Proyektor', 'status' => 'TERSEDIA', 'peminjam' => null, 'jam_pinjam' => null, 'jam_kembali' => null, 'keperluan' => null, 'token' => null],
+        'R-10' => ['id' => 'R-10', 'nama' => 'Ruang 10', 'gedung' => 'Gedung Utama - Lantai 3', 'kapasitas' => '40 Kursi &bull; AC &bull; LCD Proyektor', 'status' => 'TERSEDIA', 'peminjam' => null, 'jam_pinjam' => null, 'jam_kembali' => null, 'keperluan' => null, 'token' => null],
+        'R-11' => ['id' => 'R-11', 'nama' => 'Ruang 11', 'gedung' => 'Gedung Utama - Lantai 3', 'kapasitas' => '45 Kursi &bull; AC &bull; LCD Proyektor', 'status' => 'TERSEDIA', 'peminjam' => null, 'jam_pinjam' => null, 'jam_kembali' => null, 'keperluan' => null, 'token' => null],
+        'R-12' => ['id' => 'R-12', 'nama' => 'Ruang 12', 'gedung' => 'Gedung Utama - Lantai 3', 'kapasitas' => '45 Kursi &bull; AC &bull; LCD Proyektor', 'status' => 'TERSEDIA', 'peminjam' => null, 'jam_pinjam' => null, 'jam_kembali' => null, 'keperluan' => null, 'token' => null],
+        'R-13' => ['id' => 'R-13', 'nama' => 'Ruang 13', 'gedung' => 'Gedung Utama - Lantai 3', 'kapasitas' => '50 Kursi &bull; AC &bull; LCD Proyektor', 'status' => 'TERSEDIA', 'peminjam' => null, 'jam_pinjam' => null, 'jam_kembali' => null, 'keperluan' => null, 'token' => null],
     ];
 }
 
@@ -184,7 +137,7 @@ foreach ($_SESSION['rooms'] as $r) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIP-KUNCI | Sistem Informasi Peminjaman Kunci Kampus UDB</title>
+    <title>SIP-KUNCI | Sistem Peminjaman Kunci Ruang Kelas Kampus UDB</title>
     <style>
         :root {
             --bg-base: #090d16;
@@ -364,13 +317,13 @@ foreach ($_SESSION['rooms'] as $r) {
     <!-- Header Institusi & Author -->
     <header class="topbar">
         <div class="brand-title">
-            <h1>🔑 SIP-KUNCI &bull; Console Sistem Kampus</h1>
-            <p>Sistem Informasi Manajemen Peminjaman Kunci Fisik Ruang Kelas & Laboratorium Komputer</p>
+            <h1>🔑 SIP-KUNCI &bull; Console Sistem Kampus UDB</h1>
+            <p>Sistem Informasi Manajemen Peminjaman Kunci Fisik Ruang Kelas Teori (Ruang 1 &ndash; Ruang 13)</p>
         </div>
         <div class="author-badge">
             Mahasiswa / Praktikan:
             <strong>M. Rasya Robi A. S. (240104008)</strong>
-            <span>D3 Teknik Komputer &bull; RPL 2026</span>
+            <span>D3 Teknik Komputer &bull; RPL 2026 (Semester 5)</span>
         </div>
     </header>
 
@@ -417,9 +370,9 @@ foreach ($_SESSION['rooms'] as $r) {
                 </div>
 
                 <div class="form-group">
-                    <label>Pilih Ruangan / Laboratorium</label>
+                    <label>Pilih Ruang Kelas (Ruang 1 &ndash; 13)</label>
                     <select name="ruangan_id" required>
-                        <option value="">-- Pilih Ruangan --</option>
+                        <option value="">-- Pilih Ruang Kelas --</option>
                         <?php foreach ($_SESSION['rooms'] as $id => $r): ?>
                             <option value="<?= $id ?>" <?= $r['status'] !== 'TERSEDIA' ? 'disabled' : '' ?>>
                                 <?= $r['id'] ?> - <?= $r['nama'] ?> (<?= $r['status'] ?>)
