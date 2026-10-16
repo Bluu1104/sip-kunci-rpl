@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIP-KUNCI | Sistem Informasi Peminjaman Kunci Kampus UDB</title>
+    <style>
+        :root {
+            --bg-base: #090d16;
+            --bg-card: #0f172a;
+            --bg-card-sub: #1e293b;
+            --border-dim: #1e293b;
+            --border-glow: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-green: #10b981;
+            --accent-blue: #38bdf8;
+            --accent-rose: #f43f5e;
+            --accent-amber: #f59e0b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background: var(--bg-base); color: var(--text-main); line-height: 1.5; padding: 24px 20px; }
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        /* Top Header & Breadcrumbs */
+        .topbar {
+            background: var(--bg-card);
+            border: 1px solid var(--border-dim);
+            border-radius: 16px;
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .brand-title h1 { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; color: #fff; }
+        .brand-title p { font-size: 13px; color: var(--text-muted); }
+        .author-badge {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 10px;
+            padding: 8px 14px;
+            font-size: 12px;
+            text-align: right;
+        }
+        .author-badge strong { color: var(--accent-blue); display: block; font-size: 13px; }
+
+        /* Bento Stat Cards */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-dim);
+            border-radius: 14px;
+            padding: 18px 20px;
+        }
+        .stat-card .label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; }
+        .stat-card .value { font-size: 28px; font-weight: 800; margin-top: 4px; font-variant-numeric: tabular-nums; }
+        .stat-card.green .value { color: var(--accent-green); }
+        .stat-card.rose .value { color: var(--accent-rose); }
+        .stat-card.blue .value { color: var(--accent-blue); }
+
+        /* Alert Box */
+        .alert-box {
+            display: none;
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            align-items: center;
+            gap: 10px;
+        }
+        .alert-box.success { display: flex; background: rgba(16, 185, 129, 0.15); border: 1px solid var(--accent-green); color: #34d399; }
+        .alert-box.error { display: flex; background: rgba(244, 63, 94, 0.15); border: 1px solid var(--accent-rose); color: #fb7185; }
+
+        /* Main Content Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        @media (max-width: 880px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Form Card */
+        .form-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-dim);
+            border-radius: 16px;
+            padding: 22px;
+        }
+        .form-card h2 { font-size: 16px; font-weight: 700; margin-bottom: 16px; border-bottom: 1px solid var(--border-dim); padding-bottom: 10px; }
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 9px 12px;
+            background: var(--bg-card-sub);
+            border: 1px solid var(--border-dim);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 13px;
+            outline: none;
+            transition: border 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent-blue); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn-submit {
+            width: 100%;
+            background: var(--accent-blue);
+            color: #04243a;
+            border: none;
+            padding: 11px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            margin-top: 6px;
+        }
+        .btn-submit:hover { opacity: 0.9; }
+
+        /* Table Card */
+        .table-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-dim);
+            border-radius: 16px;
+            padding: 22px;
+            overflow-x: auto;
+        }
+        .table-card h2 { font-size: 16px; font-weight: 700; margin-bottom: 16px; border-bottom: 1px solid var(--border-dim); padding-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        th { text-align: left; padding: 10px 12px; background: var(--bg-card-sub); color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 11px; }
+        td { padding: 12px; border-bottom: 1px solid var(--border-dim); color: #e2e8f0; }
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .badge.available { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+        .badge.borrowed { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244,63,94,0.3); }
+        .btn-return {
+            background: rgba(244, 63, 94, 0.2);
+            color: #fb7185;
+            border: 1px solid var(--accent-rose);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-return:hover { background: var(--accent-rose); color: #fff; }
+
+        /* Ticket Box */
+        .ticket-box {
+            display: none;
+            background: linear-gradient(135deg, rgba(6, 78, 59, 0.5) 0%, rgba(2, 44, 34, 0.7) 100%);
+            border: 1px solid var(--accent-green);
+            border-radius: 14px;
+            padding: 16px;
+            margin-top: 16px;
+            text-align: center;
+        }
+        .ticket-code { font-family: monospace; font-size: 20px; font-weight: 800; color: #6ee7b7; letter-spacing: 2px; }
+
+        footer { text-align: center; font-size: 12px; color: var(--text-muted); margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--border-dim); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header Institusi & Author -->
+    <header class="topbar">
+        <div class="brand-title">
+            <h1>🔑 SIP-KUNCI &bull; Console Sistem Kampus</h1>
+            <p>Sistem Informasi Manajemen Peminjaman Kunci Fisik Ruang Kelas &amp; Laboratorium Komputer</p>
+        </div>
+        <div class="author-badge">
+            Mahasiswa / Praktikan:
+            <strong>M. Rasya Robi A. S. (240104008)</strong>
+            <span>D3 Teknik Komputer &bull; RPL 2026 (Semester 5)</span>
+        </div>
+    </header>
+
+    <!-- Stat Counter -->
+    <section class="stat-grid">
+        <div class="stat-card blue">
+            <div class="label">Total Ruangan Terdata</div>
+            <div class="value" id="statTotal">5 Unit</div>
+        </div>
+        <div class="stat-card green">
+            <div class="label">Kunci Tersedia di Front Office</div>
+            <div class="value" id="statAvailable">4 Kunci</div>
+        </div>
+        <div class="stat-card rose">
+            <div class="label">Kunci Sedang Dipinjam</div>
+            <div class="value" id="statBorrowed">1 Kunci</div>
+        </div>
+    </section>
+
+    <!-- Notification Alert -->
+    <div class="alert-box" id="alertBox">
+        <span id="alertIcon">✓</span>
+        <div id="alertMsg"></div>
+    </div>
+
+    <!-- Main Workspace -->
+    <div class="main-grid">
+        <!-- Panel Form Peminjaman -->
+        <section class="form-card">
+            <h2>📝 Form Reservasi Kunci Ruangan</h2>
+            <form id="formPinjam">
+                <div class="form-group">
+                    <label>NIM Mahasiswa / NIP Dosen</label>
+                    <input type="text" id="inNIM" placeholder="Contoh: 240104008" required value="240104008">
+                </div>
+
+                <div class="form-group">
+                    <label>Nama Lengkap Peminjam</label>
+                    <input type="text" id="inNama" placeholder="Contoh: M. Rasya Robi" required value="M. Rasya Robi A. S.">
+                </div>
+
+                <div class="form-group">
+                    <label>Pilih Ruangan / Laboratorium</label>
+                    <select id="selRuangan" required>
+                        <option value="">-- Pilih Ruangan --</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Jam Pinjam</label>
+                        <input type="time" id="inJamPinjam" value="09:00" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Rencana Kembali</label>
+                        <input type="time" id="inJamKembali" value="11:30" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Keperluan Pemakaian Ruangan</label>
+                    <textarea id="inKeperluan" rows="2" placeholder="Contoh: Rapat Kerja Pengurus HMPTK" required>Rapat Kerja Koordinasi Pengurus HMPTK</textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">🚀 Ajukan Peminjaman Kunci</button>
+            </form>
+
+            <div class="ticket-box" id="ticketBox">
+                <div style="font-size: 11px; text-transform: uppercase; color: #a7f3d0; font-weight: 700;">Tiket Serah Terima Front Office</div>
+                <div class="ticket-code" id="ticketCode">TKT-XXXXXX</div>
+                <div style="font-size: 12px; margin-top: 4px;" id="ticketRoom">Lab Jaringan &amp; RouterOS</div>
+                <div style="font-size: 11px; color: #94a3b8;" id="ticketDuration">09:00 - 11:30 WIB</div>
+            </div>
+        </section>
+
+        <!-- Panel Tabel Monitoring Kunci -->
+        <section class="table-card">
+            <h2>📊 Monitoring Status Kunci &amp; Front Office Handover</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Kode</th>
+                        <th>Ruangan &amp; Fasilitas</th>
+                        <th>Status</th>
+                        <th>Peminjam Aktif</th>
+                        <th>Jadwal Pinjam</th>
+                        <th>Aksi FO</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Dynamic Rows -->
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <footer>
+        SIP-KUNCI &bull; Dokumen Tugas Proyek Ujian Tengah Semester (UTS) Rekayasa Perangkat Lunak &bull; Universitas Duta Bangsa Surakarta
+    </footer>
+</div>
+
+<script>
+    // Initial Master Data
+    const initialRooms = {
+        'R-LAB-01': {
+            id: 'R-LAB-01',
+            nama: 'Lab Jaringan & RouterOS',
+            gedung: 'Gedung B - Lantai 2',
+            kapasitas: '32 PC & Rack Server',
+            status: 'TERSEDIA',
+            peminjam: null,
+            jam_pinjam: null,
+            jam_kembali: null,
+            keperluan: null,
+            token: null
+        },
+        'R-LAB-02': {
+            id: 'R-LAB-02',
+            nama: 'Lab Hardware & Perakitan PC',
+            gedung: 'Gedung B - Lantai 2',
+            kapasitas: '25 Meja Workshop',
+            status: 'DIPINJAM',
+            peminjam: 'Doni Kurniawan (240104015)',
+            jam_pinjam: '08:00',
+            jam_kembali: '10:00',
+            keperluan: 'Praktikum Troubleshooting PSU',
+            token: 'TKT-82914'
+        },
+        'R-LAB-03': {
+            id: 'R-LAB-03',
+            nama: 'Lab IoT & Embedded System',
+            gedung: 'Gedung B - Lantai 3',
+            kapasitas: '30 Workbench ESP32',
+            status: 'TERSEDIA',
+            peminjam: null,
+            jam_pinjam: null,
+            jam_kembali: null,
+            keperluan: null,
+            token: null
+        },
+        'R-KLS-301': {
+            id: 'R-KLS-301',
+            nama: 'Ruang Teori 301',
+            gedung: 'Gedung A - Lantai 3',
+            kapasitas: '45 Kursi & Proyektor',
+            status: 'TERSEDIA',
+            peminjam: null,
+            jam_pinjam: null,
+            jam_kembali: null,
+            keperluan: null,
+            token: null
+        },
+        'R-ORG-101': {
+            id: 'R-ORG-101',
+            nama: 'Ruang Sekretariat HMPTK',
+            gedung: 'Gedung C - Lantai 1',
+            kapasitas: 'Ruang Rapat Ormawa',
+            status: 'TERSEDIA',
+            peminjam: null,
+            jam_pinjam: null,
+            jam_kembali: null,
+            keperluan: null,
+            token: null
+        }
+    };
+
+    let rooms = JSON.parse(localStorage.getItem('sip_kunci_rooms')) || initialRooms;
+
+    function saveState() {
+        localStorage.setItem('sip_kunci_rooms', JSON.stringify(rooms));
+    }
+
+    function showAlert(msg, type = 'success') {
+        const box = document.getElementById('alertBox');
+        const icon = document.getElementById('alertIcon');
+        const text = document.getElementById('alertMsg');
+        box.className = 'alert-box ' + type;
+        icon.textContent = type === 'success' ? '✓' : '⚠️';
+        text.textContent = msg;
+        box.style.display = 'flex';
+        box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function renderUI() {
+        let total = 0, available = 0, borrowed = 0;
+        const select = document.getElementById('selRuangan');
+        const tbody = document.getElementById('tableBody');
+
+        select.innerHTML = '<option value="">-- Pilih Ruangan --</option>';
+        tbody.innerHTML = '';
+
+        Object.values(rooms).forEach(r => {
+            total++;
+            if (r.status === 'TERSEDIA') available++;
+            else borrowed++;
+
+            // Populate Select Option
+            const opt = document.createElement('option');
+            opt.value = r.id;
+            opt.textContent = `${r.id} - ${r.nama} (${r.status})`;
+            if (r.status !== 'TERSEDIA') opt.disabled = true;
+            select.appendChild(opt);
+
+            // Populate Table Row
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${r.id}</strong></td>
+                <td>
+                    <div><strong>${r.nama}</strong></div>
+                    <div style="font-size: 11px; color: var(--text-muted);">${r.gedung} &bull; ${r.kapasitas}</div>
+                </td>
+                <td>
+                    <span class="badge ${r.status === 'TERSEDIA' ? 'available' : 'borrowed'}">
+                        ${r.status}
+                    </span>
+                </td>
+                <td>
+                    ${r.peminjam ? `<div>${r.peminjam}</div><div style="font-size:10px; color:#94a3b8;">${r.keperluan || ''}</div>` : '<span style="color:#64748b">-</span>'}
+                </td>
+                <td>
+                    ${r.jam_pinjam ? `<div>${r.jam_pinjam} - ${r.jam_kembali}</div>${r.token ? `<div style="font-size:10px; color:#38bdf8; font-family:monospace;">${r.token}</div>` : ''}` : '<span style="color:#64748b">-</span>'}
+                </td>
+                <td>
+                    ${r.status === 'DIPINJAM' ? `<button type="button" class="btn-return" onclick="returnKey('${r.id}')" title="Klik saat kunci diserahkan ke meja FO">↩ Terima Kunci</button>` : '<span style="font-size: 11px; color: #10b981;">Siap di Rak</span>'}
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        document.getElementById('statTotal').textContent = total + ' Unit';
+        document.getElementById('statAvailable').textContent = available + ' Kunci';
+        document.getElementById('statBorrowed').textContent = borrowed + ' Kunci';
+    }
+
+    // Handle Form Pinjam
+    document.getElementById('formPinjam').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const nim = document.getElementById('inNIM').value.trim();
+        const nama = document.getElementById('inNama').value.trim();
+        const ruangan_id = document.getElementById('selRuangan').value;
+        const jam_pinjam = document.getElementById('inJamPinjam').value;
+        const jam_kembali = document.getElementById('inJamKembali').value;
+        const keperluan = document.getElementById('inKeperluan').value.trim();
+
+        if (!nim || !nama || !ruangan_id || !jam_pinjam || !jam_kembali) {
+            showAlert('Semua field formulir peminjaman wajib diisi lengkap.', 'error');
+            return;
+        }
+
+        const room = rooms[ruangan_id];
+        if (!room) {
+            showAlert('Ruangan tidak valid atau tidak terdaftar.', 'error');
+            return;
+        }
+
+        if (room.status !== 'TERSEDIA') {
+            showAlert(`Gagal meminjam: Kunci ${room.nama} sedang DIPINJAM oleh ${room.peminjam} hingga pukul ${room.jam_kembali}.`, 'error');
+            return;
+        }
+
+        const t1 = new Date(`2026-10-16T${jam_pinjam}:00`);
+        const t2 = new Date(`2026-10-16T${jam_kembali}:00`);
+        const diffHours = (t2 - t1) / (1000 * 3600);
+
+        if (diffHours <= 0) {
+            showAlert('Jam rencana pengembalian harus lebih besar dari jam peminjaman.', 'error');
+            return;
+        }
+
+        if (diffHours > 4) {
+            showAlert('Durasi peminjaman melebihi batas reguler mahasiswa (maksimal 4 jam per sesi).', 'error');
+            return;
+        }
+
+        const token = 'TKT-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+        room.status = 'DIPINJAM';
+        room.peminjam = `${nama} (${nim})`;
+        room.jam_pinjam = jam_pinjam;
+        room.jam_kembali = jam_kembali;
+        room.keperluan = keperluan;
+        room.token = token;
+
+        saveState();
+        renderUI();
+
+        // Show Active Ticket
+        document.getElementById('ticketCode').textContent = token;
+        document.getElementById('ticketRoom').textContent = room.nama;
+        document.getElementById('ticketDuration').textContent = `${jam_pinjam} - ${jam_kembali} WIB`;
+        document.getElementById('ticketBox').style.display = 'block';
+
+        showAlert(`Peminjaman berhasil diajukan! Tiket digital resmi diterbitkan dengan kode token [${token}]. Silakan ambil kunci fisik di meja Front Office.`, 'success');
+    });
+
+    // Handle Return Key
+    window.returnKey = function(id) {
+        const room = rooms[id];
+        if (!room || room.status !== 'DIPINJAM') return;
+
+        const nama_r = room.nama;
+        const pem = room.peminjam;
+        const jam_plan = room.jam_kembali;
+
+        // Simulasi perhitungan denda keterlambatan (toleransi 15 menit, Rp 5.000 / 30 menit)
+        let penaltyText = "";
+        if (jam_plan) {
+            const planTime = new Date(`2026-10-16T${jam_plan}:00`);
+            const nowTime = new Date(`2026-10-16T11:45:00`); // Simulasi pengembalian jam 11:45
+            const lateMin = Math.max(0, Math.round((nowTime - planTime) / (1000 * 60)));
+
+            if (lateMin > 15) {
+                const denda = Math.ceil(lateMin / 30) * 5000;
+                penaltyText = ` Terlambat ${lateMin} menit. Dikenakan sanksi denda pemeliharaan fasilitas sebesar Rp ${denda.toLocaleString('id-ID')}.`;
+            }
+        }
+
+        room.status = 'TERSEDIA';
+        room.peminjam = null;
+        room.jam_pinjam = null;
+        room.jam_kembali = null;
+        room.keperluan = null;
+        room.token = null;
+
+        saveState();
+        renderUI();
+
+        document.getElementById('ticketBox').style.display = 'none';
+        showAlert(`Kunci ${nama_r} berhasil diserahkan kembali oleh ${pem}. Status loker kembali TERSEDIA.${penaltyText}`, 'success');
+    };
+
+    // Initial render
+    renderUI();
+</script>
+</body>
+</html>
